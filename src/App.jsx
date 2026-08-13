@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://campus-marketplace-api-filmt.onrender.com/api/listings";
+const API_URL =
+  "https://campus-marketplace-api-flmt.onrender.com/api/listings";
 
 function App() {
   const [listings, setListings] = useState([]);
@@ -29,12 +30,14 @@ function App() {
     location: "",
   });
 
+  // Fetch listings from backend
   const fetchListings = async () => {
     try {
       const response = await axios.get(API_URL);
       setListings(response.data);
     } catch (error) {
       console.error("Error fetching listings:", error);
+      alert("Could not load marketplace listings.");
     }
   };
 
@@ -42,6 +45,7 @@ function App() {
     fetchListings();
   }, []);
 
+  // Handle listing form changes
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -49,6 +53,7 @@ function App() {
     });
   };
 
+  // Handle profile changes
   const handleProfileChange = (e) => {
     setProfile({
       ...profile,
@@ -56,29 +61,65 @@ function App() {
     });
   };
 
+  // ADD / UPDATE LISTING
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.title || !form.description || !form.price) {
-      alert("Please fill in all required fields.");
+      alert("Please fill in title, description and price.");
       return;
     }
 
     try {
       if (editingId) {
-        await axios.put(`${API_URL}/${editingId}`, form);
+        // UPDATE
+        const response = await axios.put(
+          `${API_URL}/${editingId}`,
+          {
+            ...form,
+            price: Number(form.price),
+          }
+        );
+
+        setListings((prev) =>
+          prev.map((item) =>
+            item.id === editingId ? response.data : item
+          )
+        );
+
         setEditingId(null);
+
+        alert("✅ Listing updated successfully!");
       } else {
-        await axios.post(API_URL, form);
+        // CREATE
+        const response = await axios.post(API_URL, {
+          ...form,
+          price: Number(form.price),
+        });
+
+        // Immediately show the new listing
+        setListings((prev) => [
+          response.data,
+          ...prev,
+        ]);
+
+        alert("✅ Listing added successfully!");
       }
 
       resetForm();
-      fetchListings();
     } catch (error) {
-      console.error("Error saving listing:", error);
+      console.error("FULL ERROR:", error);
+
+      alert(
+        "❌ Could not save listing.\n\n" +
+          (error.response?.data?.message ||
+            error.message ||
+            "Please try again.")
+      );
     }
   };
 
+  // Reset form
   const resetForm = () => {
     setForm({
       title: "",
@@ -91,6 +132,7 @@ function App() {
     });
   };
 
+  // Edit listing
   const editListing = (item) => {
     setEditingId(item.id);
 
@@ -110,39 +152,63 @@ function App() {
     });
   };
 
+  // Cancel edit
   const cancelEdit = () => {
     setEditingId(null);
     resetForm();
   };
 
+  // Delete listing
   const deleteListing = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
 
-      setFavorites(favorites.filter((fav) => fav !== id));
+      setListings((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
 
-      fetchListings();
+      setFavorites((prev) =>
+        prev.filter((fav) => fav !== id)
+      );
+
+      alert("🗑️ Listing deleted.");
     } catch (error) {
-      console.error("Error deleting listing:", error);
+      console.error("Delete error:", error);
+
+      alert(
+        "❌ Could not delete listing.\n\n" +
+          (error.response?.data?.message ||
+            error.message ||
+            "Please try again.")
+      );
     }
   };
 
+  // Wishlist
   const toggleFavorite = (id) => {
     if (favorites.includes(id)) {
-      setFavorites(favorites.filter((fav) => fav !== id));
+      setFavorites(
+        favorites.filter((fav) => fav !== id)
+      );
     } else {
       setFavorites([...favorites, id]);
     }
   };
 
+  // Search, category filter and price sorting
   const filteredListings = listings
     .filter((item) => {
       const matchesSearch =
-        item.title.toLowerCase().includes(search.toLowerCase()) ||
-        item.description.toLowerCase().includes(search.toLowerCase());
+        item.title
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        item.description
+          .toLowerCase()
+          .includes(search.toLowerCase());
 
       const matchesCategory =
-        category === "All" || item.category === category;
+        category === "All" ||
+        item.category === category;
 
       return matchesSearch && matchesCategory;
     })
@@ -166,7 +232,9 @@ function App() {
         <p>Buy • Sell • Exchange • Connect</p>
 
         <button
-          onClick={() => setShowProfile(!showProfile)}
+          onClick={() =>
+            setShowProfile(!showProfile)
+          }
           style={{
             marginTop: "20px",
             background: "white",
@@ -177,7 +245,10 @@ function App() {
             fontWeight: "bold",
           }}
         >
-          👤 {profile.name ? profile.name : "Student Profile"}
+          👤{" "}
+          {profile.name
+            ? profile.name
+            : "Student Profile"}
         </button>
       </header>
 
@@ -234,36 +305,58 @@ function App() {
             type="text"
             placeholder="Search listings..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
           />
 
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) =>
+              setCategory(e.target.value)
+            }
           >
-            <option value="All">All Categories</option>
+            <option value="All">
+              All Categories
+            </option>
             <option value="Books">Books</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Vehicles">Vehicles</option>
-            <option value="Furniture">Furniture</option>
+            <option value="Electronics">
+              Electronics
+            </option>
+            <option value="Vehicles">
+              Vehicles
+            </option>
+            <option value="Furniture">
+              Furniture
+            </option>
             <option value="Notes">Notes</option>
             <option value="Other">Other</option>
           </select>
 
           <select
             value={sortPrice}
-            onChange={(e) => setSortPrice(e.target.value)}
+            onChange={(e) =>
+              setSortPrice(e.target.value)
+            }
           >
-            <option value="none">Sort by Price</option>
-            <option value="low">Price: Low → High</option>
-            <option value="high">Price: High → Low</option>
+            <option value="none">
+              Sort by Price
+            </option>
+            <option value="low">
+              Price: Low → High
+            </option>
+            <option value="high">
+              Price: High → Low
+            </option>
           </select>
         </section>
 
         {/* ADD / EDIT */}
         <section>
           <h2>
-            {editingId ? "✏️ Edit Listing" : "➕ Post an Item"}
+            {editingId
+              ? "✏️ Edit Listing"
+              : "➕ Post an Item"}
           </h2>
 
           <form onSubmit={handleSubmit}>
@@ -328,14 +421,18 @@ function App() {
             </select>
 
             <button type="submit">
-              {editingId ? "Update Listing" : "Add Listing"}
+              {editingId
+                ? "Update Listing"
+                : "Add Listing"}
             </button>
 
             {editingId && (
               <button
                 type="button"
                 onClick={cancelEdit}
-                style={{ background: "#64748b" }}
+                style={{
+                  background: "#64748b",
+                }}
               >
                 Cancel Edit
               </button>
@@ -343,7 +440,7 @@ function App() {
           </form>
         </section>
 
-        {/* LISTINGS */}
+        {/* MARKETPLACE */}
         <section>
           <h2>🛍️ Marketplace Listings</h2>
 
@@ -370,10 +467,13 @@ function App() {
 
                 <p>{item.description}</p>
 
-                <strong>₹{item.price}</strong>
+                <strong>
+                  ₹{item.price}
+                </strong>
 
                 <p>
-                  🏷️ {item.category} • {item.condition}
+                  🏷️ {item.category} •{" "}
+                  {item.condition}
                 </p>
 
                 {item.location && (
@@ -389,11 +489,14 @@ function App() {
                   }}
                 >
                   <button
-                    onClick={() => toggleFavorite(item.id)}
+                    onClick={() =>
+                      toggleFavorite(item.id)
+                    }
                     style={{
-                      background: favorites.includes(item.id)
-                        ? "#e11d48"
-                        : "#f59e0b",
+                      background:
+                        favorites.includes(item.id)
+                          ? "#e11d48"
+                          : "#f59e0b",
                     }}
                   >
                     {favorites.includes(item.id)
@@ -402,14 +505,20 @@ function App() {
                   </button>
 
                   <button
-                    onClick={() => editListing(item)}
-                    style={{ background: "#4f46e5" }}
+                    onClick={() =>
+                      editListing(item)
+                    }
+                    style={{
+                      background: "#4f46e5",
+                    }}
                   >
                     ✏️ Edit
                   </button>
 
                   <button
-                    onClick={() => deleteListing(item.id)}
+                    onClick={() =>
+                      deleteListing(item.id)
+                    }
                   >
                     🗑️ Delete
                   </button>
