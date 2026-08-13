@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/listings";
+const API_URL = "https://campus-marketplace-api-filmt.onrender.com/api/listings";
 
 function App() {
   const [listings, setListings] = useState([]);
