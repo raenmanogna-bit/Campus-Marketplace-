@@ -1,16 +1,85 @@
-# React + Vite
+# 🛍️ Campus Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A student-focused online marketplace designed for buying, selling, and exchanging items within a campus community.
 
-Currently, two official plugins are available:
+🌐 **Live Website:** https://campus-marketplace-chi-mocha.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🚀 **Built for:** Deploython 2.0
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📌 About the Project
 
-## Expanding the ESLint configuration
+Campus Marketplace provides students with a simple platform to discover useful items from other students or list their own items for sale or exchange.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The platform is designed specifically for campus communities, making it easier for students to find books, electronics, vehicles, notes, furniture, and other useful items nearby.
+
+---
+
+## ✨ Features
+
+- 🛒 Create marketplace listings
+- 🖼️ Add images to listings
+- 🔍 Search for items
+- 🏷️ Filter listings by category
+- 💰 Sort items by price
+- ❤️ Save favorite listings
+- 👤 Student profile
+- 📍 Add campus location
+- ✏️ Edit listings
+- 🗑️ Delete listings
+- 📱 Responsive user interface
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- React
+- Vite
+- Axios
+- HTML
+- CSS
+- JavaScript
+
+### Backend
+- Node.js
+- Express.js
+- CORS
+
+### Deployment
+- Vercel — Frontend
+- Render — Backend
+
+---
+
+## 🔗 Deployment
+
+### 🌐 Live Application
+https://campus-marketplace-chi-mocha.vercel.app
+
+### ⚙️ Backend API
+https://campus-marketplace-api-flmt.onrender.com
+
+---
+
+## 📂 Project Structure
+
+```text
+Campus-Marketplace/
+│
+├── backend/
+│   ├── index.js
+│   ├── package.json
+│   └── package-lock.json
+│
+├── public/
+│
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── ...
+│
+├── package.json
+├── package-lock.json
+└── README.md
